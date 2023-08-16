@@ -209,7 +209,7 @@ app.put('/videos/:id' ,(req:
 
 })
 
-app.delete('/videos', (req: Request, res: Response) =>{
+app.delete('/testing/all-data', (req: Request, res: Response) =>{
     videoDB.splice(0, videoDB.length)
     res.sendStatus(204)
 })
