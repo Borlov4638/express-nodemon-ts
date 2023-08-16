@@ -42,18 +42,18 @@ exports.app.get('/videos/:id', (req, res) => {
 });
 exports.app.post('/videos', (req, res) => {
     let errors = {
-        errorMessages: []
+        errorsMessages: []
     };
     let { title, author, availableResolutions } = req.body;
     if (!title || !title.length || title.trim().length > 40) {
-        errors.errorMessages.push({ message: 'Invalid title', field: 'title' });
+        errors.errorsMessages.push({ message: 'Invalid title', field: 'title' });
     }
     if (!author || !author.length || author.trim().length > 20) {
-        errors.errorMessages.push({ message: 'Invalid author', field: 'author' });
+        errors.errorsMessages.push({ message: 'Invalid author', field: 'author' });
     }
     if (Array.isArray(availableResolutions) && availableResolutions.length) {
         availableResolutions.map((r) => {
-            !AvailableResolutions[r] && errors.errorMessages.push({
+            !AvailableResolutions[r] && errors.errorsMessages.push({
                 message: 'invalid resulution',
                 field: 'availableResolutions'
             });
@@ -62,7 +62,7 @@ exports.app.post('/videos', (req, res) => {
     else {
         availableResolutions = [];
     }
-    if (errors.errorMessages.length) {
+    if (errors.errorsMessages.length) {
         res.status(400).send(errors);
         return;
     }
@@ -84,7 +84,7 @@ exports.app.post('/videos', (req, res) => {
 });
 exports.app.put('/videos/:id', (req, res) => {
     let errors = {
-        errorMessages: []
+        errorsMessages: []
     };
     const videoToUpdate = videoDB.find(vid => vid.id === +req.params.id);
     if (!videoToUpdate) {
@@ -92,15 +92,15 @@ exports.app.put('/videos/:id', (req, res) => {
         return;
     }
     if (!req.body.title || !req.body.title.length || req.body.title.trim().length > 40) {
-        errors.errorMessages.push({ message: 'Invalid title', field: 'title' });
+        errors.errorsMessages.push({ message: 'Invalid title', field: 'title' });
     }
     if (!req.body.author || !req.body.author.length || req.body.author.trim().length > 20) {
-        errors.errorMessages.push({ message: 'Invalid author', field: 'author' });
+        errors.errorsMessages.push({ message: 'Invalid author', field: 'author' });
     }
     if (Array.isArray(req.body.availableResolutions) && req.body.availableResolutions.length) {
         req.body.availableResolutions.map((r) => {
             if (!AvailableResolutions[r]) {
-                errors.errorMessages.push({
+                errors.errorsMessages.push({
                     message: 'invalid resulution',
                     field: 'availableResolutions'
                 });
@@ -115,7 +115,7 @@ exports.app.put('/videos/:id', (req, res) => {
             videoToUpdate.canBeDownloaded = req.body.canBeDownloaded;
         }
         if (typeof req.body.canBeDownloaded !== 'boolean') {
-            errors.errorMessages.push({
+            errors.errorsMessages.push({
                 message: 'canBeDownloaded shoud be boolean',
                 field: 'canBeDownloaded'
             });
@@ -123,7 +123,7 @@ exports.app.put('/videos/:id', (req, res) => {
     }
     if (req.body.minAgeRestriction) {
         if ((typeof req.body.minAgeRestriction) !== 'number' || req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1) {
-            errors.errorMessages.push({
+            errors.errorsMessages.push({
                 message: 'Invalid Age Restriction',
                 field: 'minAgeRestriction'
             });
@@ -132,15 +132,15 @@ exports.app.put('/videos/:id', (req, res) => {
             videoToUpdate.minAgeRestriction = req.body.minAgeRestriction;
         }
     }
-    if (errors.errorMessages.length) {
+    if (errors.errorsMessages.length) {
         res.status(400).send(errors);
         return;
     }
-    const publicationDate = new Date();
-    videoDB[videoDB.indexOf(videoToUpdate)] = Object.assign(Object.assign({}, videoToUpdate), { author: req.body.author, title: req.body.title });
-    res.sendStatus(204);
+    const newPublicationDate = new Date(req.body.publicationDate);
+    videoDB[videoDB.indexOf(videoToUpdate)] = Object.assign(Object.assign({}, videoToUpdate), { author: req.body.author, title: req.body.title, publicationDate: newPublicationDate.toISOString() });
+    res.status(204).send(newPublicationDate.toISOString());
 });
-exports.app.delete('/videos', (req, res) => {
+exports.app.delete('/testing/all-data', (req, res) => {
     videoDB.splice(0, videoDB.length);
     res.sendStatus(204);
 });
