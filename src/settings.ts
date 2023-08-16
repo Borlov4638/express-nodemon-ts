@@ -127,7 +127,7 @@ app.post('/videos', (req : RequestWithBody<{title:string, author:string,availabl
 
 app.put('/videos/:id' ,(req:
     RequestWithBodyAndParam<{id:string},
-    {title:string, author:string, availableResolutions:AvailableResolutions[], canBeDownloaded:boolean, minAgeRestriction: number|null}>,
+    {title:string, author:string, availableResolutions:AvailableResolutions[], canBeDownloaded:boolean, minAgeRestriction: number|null, publicationDate: string}>,
     res: Response) =>{
     
     let errors: ErrorType = {
@@ -193,20 +193,17 @@ app.put('/videos/:id' ,(req:
         return
     }
 
-    const publicationDate = new Date()
+    const newPublicationDate = new Date()
+    
 
     videoDB[videoDB.indexOf(videoToUpdate)] = {
         ...videoToUpdate,
         author:req.body.author,
         title:req.body.title,
-        // publicationDate: publicationDate.toISOString()
+        publicationDate: newPublicationDate.toISOString()
     }
-
-    res.sendStatus(204)
-
-
-
-
+    console.log(newPublicationDate.toISOString())
+    res.status(204).send(newPublicationDate.toISOString())
 })
 
 app.delete('/testing/all-data', (req: Request, res: Response) =>{
