@@ -132,6 +132,12 @@ exports.app.put('/videos/:id', (req, res) => {
             videoToUpdate.minAgeRestriction = req.body.minAgeRestriction;
         }
     }
+    if (typeof req.body.publicationDate !== 'string' || req.body.publicationDate.length < 1) {
+        errors.errorsMessages.push({
+            message: 'Invalid publication date',
+            field: 'publicationDate'
+        });
+    }
     if (errors.errorsMessages.length) {
         res.status(400).send(errors);
         return;

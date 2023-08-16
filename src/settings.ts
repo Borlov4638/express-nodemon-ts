@@ -184,7 +184,13 @@ app.put('/videos/:id' ,(req:
         }
     }
 
+    if(typeof req.body.publicationDate !== 'string' || req.body.publicationDate.length < 1){
+        errors.errorsMessages.push({
+            message:'Invalid publication date',
+            field:'publicationDate'
+        })
 
+    }
 
 
 
