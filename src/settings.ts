@@ -1,56 +1,15 @@
 import express, { Request, Response } from 'express'
-export const app = express()
+import { RequestWithBody, RequestWithBodyAndParam, RequestWithId } from './types/request.types'
+import { ErrorType } from './types/errors.types'
+import { videoDB } from './db/videos.db'
+import { AvailableResolutions } from './enums/video.enums'
+import { VideoType } from './types/video.type'
 
+export const app = express()
 
 app.use(express.json())
 
 
-type RequestWithId<P> = Request<P,{},{},{}>
-
-type RequestWithBody<B> = Request<{},{},B,{}>
-
-type RequestWithBodyAndParam<P,B> = Request<P,{},B,{}>
-
-type errorsMessages ={
-    message:string
-    field:string
-}
-
-type ErrorType = {
-    errorsMessages: errorsMessages[]
-}
-
-export enum AvailableResolutions{
-    P144= 'P144',
-    P240 ='P240',
-    P360 = 'P360',
-    P480 = 'P480',
-    P720 = 'P720',
-    P1080 = 'P1080', P1440 = 'P1440',
-    P2160 = 'P2160'
-}
-
-export type VideoType = {
-    id:number
-    title:string
-    author:string
-    canBeDownloaded:boolean
-    minAgeRestriction: number|null
-    createdAt: string
-    publicationDate: string
-    availableResolutions: AvailableResolutions[]
-}
-
-const videoDB : VideoType[] = [{
-    "id": 0,
-    "title": "string",
-    "author": "string",
-    "canBeDownloaded": false,
-    "minAgeRestriction": null,
-    "createdAt": "2023-08-14T16:17:58.175Z",
-    "publicationDate": "2023-08-14T16:17:58.175Z",
-    "availableResolutions": [AvailableResolutions.P144]
-  }]
 
 app.get('/videos',(req : Request, res: Response) =>{
     res.send(videoDB)
@@ -68,8 +27,6 @@ app.get('/videos/:id',(req : RequestWithId<{id:number}>, res: Response) =>{
 
     res.send(video)
 })
-
-
 
 app.post('/videos', (req : RequestWithBody<{title:string, author:string,availableResolutions:AvailableResolutions[] }>, res: Response) =>{
 
